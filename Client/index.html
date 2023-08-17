@@ -1,0 +1,111 @@
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <style>
+    body,
+    html {
+      height: 100%;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
+    .elementToFadeInAndOut {
+      background-image: url("sisyphus.jpg");
+      -webkit-animation: fadeinout 4s linear forwards;
+      animation: fadeinout 10s linear forwards;
+    }
+
+    @-webkit-keyframes fadeinout {
+
+      0%,
+      100% {
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    @keyframes fadeinout {
+
+      0%,
+      100% {
+        opacity: 0;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .strokeme {
+      color: white;
+      background-color: white;
+      text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
+    }
+
+    img {
+      height: 1000px;
+      max-width: 100%;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .hidden {
+      display: none;
+    }
+
+  </style>
+</head>
+
+<body>
+
+  <h1><mark style="background-color: red; color: white"><span id="max_score">0m</span> - <span
+        id="max_player">Sisyphus</span></mark>
+  </h1>
+
+  <h1><mark><span id="score">0m</span> - <span id="player">Sisyphus</span></mark></h1>
+
+  <img src="sisyphus.jpg" id="sisyphus" class="hidden">
+  <script>
+    function hide() {
+      sisyphus = document.getElementById("sisyphus");
+      sisyphus.classList.remove("elementToFadeInAndOut");
+      sisyphus.classList.add("hidden");
+    }
+
+    function sisyphusShow() {
+      sisyphus = document.getElementById("sisyphus");
+      sisyphus.classList.remove("hidden");
+      sisyphus.classList.add("elementToFadeInAndOut");
+      setTimeout(hide, 10000);
+    }
+
+    Events.Subscribe("SetScore", function (param1) {
+      document.getElementById("score").textContent = param1;
+    })
+
+    Events.Subscribe("SetMaxScore", function (param1) {
+      document.getElementById("max_score").textContent = param1;
+    })
+
+    Events.Subscribe("UpdatePlayer", function (param1) {
+      document.getElementById("player").textContent = param1;
+    })
+
+    Events.Subscribe("UpdateMaxPlayer", function (param1) {
+      document.getElementById("max_player").textContent = param1;
+    })
+
+    Events.Subscribe("Sisyphus", function (param1) {
+      sisyphusShow();
+    })
+  </script>
+</body>
+
+</html>
