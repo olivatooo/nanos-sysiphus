@@ -3,12 +3,15 @@
 <head>
   <meta charset="utf-8">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&display=swap');
+
     body,
     html {
       height: 100%;
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
+      font-family: 'Cinzel', serif;
     }
 
     .elementToFadeInAndOut {
@@ -18,32 +21,17 @@
     }
 
     @-webkit-keyframes fadeinout {
-
-      0%,
-      100% {
-        opacity: 0;
-      }
-
-      50% {
-        opacity: 1;
-      }
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
     }
 
     @keyframes fadeinout {
-
-      0%,
-      100% {
-        opacity: 0;
-      }
-
-      50% {
-        opacity: 1;
-      }
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
     }
 
     .strokeme {
-      color: white;
-      background-color: white;
+      color: #d4b57d;
       text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;
     }
 
@@ -54,25 +42,207 @@
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
+      border: 15px solid #d4b57d;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
     }
 
     .hidden {
       display: none;
     }
 
+    h1 {
+      font-family: 'Cinzel', serif;
+      text-align: center;
+      margin: 20px;
+      font-size: 2.5em;
+    }
+
+    .score-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+    }
+
+    .quote-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 1000;
+      max-width: 300px;
+    }
+
+    .score-display {
+      text-align: right;
+      margin: 10px 0;
+    }
+
+    mark {
+      background: linear-gradient(to right, #d4b57d, #c19b6c);
+      padding: 10px 20px;
+      border-radius: 5px;
+      color: #2c1810;
+      border: 2px solid #8b7355;
+      display: inline-block;
+    }
+
+    mark[style*="background-color: red"] {
+      background: linear-gradient(to right, #8b0000, #a52a2a);
+      border: 2px solid #580000;
+    }
+
   </style>
 </head>
 
 <body>
+  <div class="score-container">
+    <div class="score-display">
+      <mark style="background-color: red; color: white"><span id="max_score">0m</span> - <span id="max_player">Sisyphus</span></mark>
+    </div>
+    <br>
+    <div class="score-display">
+      <mark><span id="score">0m</span> - <span id="player">Sisyphus</span></mark>
+    </div>
+  </div>
 
-  <h1><mark style="background-color: red; color: white"><span id="max_score">0m</span> - <span
-        id="max_player">Sisyphus</span></mark>
-  </h1>
-
-  <h1><mark><span id="score">0m</span> - <span id="player">Sisyphus</span></mark></h1>
+  <div class="quote-container">
+    <div class="score-display">
+      <mark id="quote">"One must imagine Sisyphus happy."</mark>
+    </div>
+  </div>
 
   <img src="sisyphus.jpg" id="sisyphus" class="hidden">
   <script>
+    const quotes = [
+      "One must imagine Sisyphus happy.",
+      "The struggle itself toward the heights is enough to fill a man's heart.",
+      "Each atom of that stone, each mineral flake of that night-filled mountain, in itself forms a world.",
+      "The only way to deal with an unfree world is to become so absolutely free that your very existence is an act of rebellion.",
+      "The journey of a thousand miles begins with a single step.", // Lao Tzu
+      "Nature does not hurry, yet everything is accomplished.", // Lao Tzu
+      "Life is a series of natural and spontaneous changes.", // Lao Tzu
+      "The highest good is like water.", // Tao Te Ching
+      "True wisdom comes to each of us when we realize how little we understand about life.", // Socrates
+      "The unexamined life is not worth living.", // Socrates
+      "Know thyself.", // Temple of Apollo at Delphi
+      "Everything flows.", // Heraclitus
+      "No man ever steps in the same river twice.", // Heraclitus
+      "The way up and the way down are one and the same.", // Heraclitus
+      "Virtue lies in our power, and similarly so does vice.", // Aristotle
+      "We are what we repeatedly do. Excellence, then, is not an act, but a habit.", // Aristotle
+      "The greatest happiness of life is the conviction that we are loved.", // Plato
+      "He who has overcome his fears will truly be free.", // Aristotle
+      "Empty your mind, be formless, shapeless, like water.", // Bruce Lee's interpretation of Tao
+      "The perfect way is without difficulty, save that it avoids picking and choosing.", // Seng-ts'an
+      "The only true wisdom is in knowing you know nothing.", // Socrates
+      "Wonder is the beginning of wisdom.", // Socrates
+      "To find yourself, think for yourself.", // Socrates
+      "Be kind, for everyone you meet is fighting a hard battle.", // Plato
+      "Good people do not need laws to tell them to act responsibly.", // Plato
+      "At the touch of love everyone becomes a poet.", // Plato
+      "Music gives a soul to the universe.", // Plato
+      "Wise men speak because they have something to say.", // Plato
+      "The beginning is the most important part of the work.", // Plato
+      "Love is a serious mental disease.", // Plato
+      "Happiness depends upon ourselves.", // Aristotle
+      "The whole is greater than the sum of its parts.", // Aristotle
+      "Pleasure in the job puts perfection in the work.", // Aristotle
+      "The energy of the mind is the essence of life.", // Aristotle
+      "The aim of art is to represent not the outward appearance of things.", // Aristotle
+      "Hope is a waking dream.", // Aristotle
+      "Quality is not an act, it is a habit.", // Aristotle
+      "The roots of education are bitter, but the fruit is sweet.", // Aristotle
+      "Change is the only constant in life.", // Heraclitus
+      "Character is destiny.", // Heraclitus
+      "The sun is new each day.", // Heraclitus
+      "Much learning does not teach understanding.", // Heraclitus
+      "A man's character is his fate.", // Heraclitus
+      "The path up and down is one and the same.", // Heraclitus
+      "Life is flux.", // Heraclitus
+      "The best way to live is to be like water.", // Lao Tzu
+      "Silence is a source of great strength.", // Lao Tzu
+      "When I let go of what I am, I become what I might be.", // Lao Tzu
+      "Be content with what you have; rejoice in the way things are.", // Lao Tzu
+      "A good traveler has no fixed plans.", // Lao Tzu
+      "Mastering others is strength, mastering yourself is true power.", // Lao Tzu
+      "The softest things in the universe overcome the hardest things.", // Lao Tzu
+      "Knowledge is a treasure, but practice is the key to it.", // Lao Tzu
+      "Great acts are made up of small deeds.", // Lao Tzu
+      "Music in the soul can be heard by the universe.", // Lao Tzu
+      "The wise man does nothing, yet nothing is left undone.", // Lao Tzu
+      "To see things in the seed, that is genius.", // Lao Tzu
+      "Care about what other people think and you will always be their prisoner.", // Lao Tzu
+      "The journey is the reward.", // Tao saying
+      "Those who know do not speak. Those who speak do not know.", // Tao Te Ching
+      "When you are content to be simply yourself, everybody will respect you.", // Tao Te Ching
+      "A leader is best when people barely know he exists.", // Tao Te Ching
+      "Simplicity is the ultimate sophistication.", // Leonardo da Vinci
+      "Learning never exhausts the mind.", // Leonardo da Vinci
+      "Art is never finished, only abandoned.", // Leonardo da Vinci
+      "Time stays long enough for anyone who will use it.", // Leonardo da Vinci
+      "The noblest pleasure is the joy of understanding.", // Leonardo da Vinci
+      "Nothing strengthens authority so much as silence.", // Leonardo da Vinci
+      "Life is pretty simple: You do some stuff. Most fails. Some works.", // Leonardo da Vinci
+      "I have been impressed with the urgency of doing.", // Leonardo da Vinci
+      "The greatest deception men suffer is from their own opinions.", // Leonardo da Vinci
+      "Every action needs to be prompted by a motive.", // Leonardo da Vinci
+      "Where the spirit does not work with the hand, there is no art.", // Leonardo da Vinci
+      "All our knowledge has its origins in our perceptions.", // Leonardo da Vinci
+      "The mind that opens to a new idea never returns to its original size.", // Albert Einstein
+      "Life is like riding a bicycle. To keep your balance, you must keep moving.", // Albert Einstein
+      "Imagination is more important than knowledge.", // Albert Einstein
+      "The important thing is not to stop questioning.", // Albert Einstein
+      "Look deep into nature, and then you will understand everything better.", // Albert Einstein
+      "Peace cannot be kept by force; it can only be achieved by understanding.", // Albert Einstein
+      "The only source of knowledge is experience.", // Albert Einstein
+      "Pure mathematics is, in its way, the poetry of logical ideas.", // Albert Einstein
+      "The true sign of intelligence is not knowledge but imagination.", // Albert Einstein
+      "Anyone who has never made a mistake has never tried anything new.", // Albert Einstein
+      "Try not to become a man of success, but rather try to become a man of value.", // Albert Einstein
+      "The only way to do great work is to love what you do.", // Steve Jobs
+      "Stay hungry, stay foolish.", // Steve Jobs
+      "Innovation distinguishes between a leader and a follower.", // Steve Jobs
+      "I'm convinced that about half of what separates successful entrepreneurs from non-successful ones is pure perseverance.", // Steve Jobs
+      "Your time is limited, don't waste it living someone else's life.", // Steve Jobs
+      "Sometimes life hits you in the head with a brick. Don't lose faith.", // Steve Jobs
+      "Be a yardstick of quality.", // Steve Jobs
+      "The people who are crazy enough to think they can change the world are the ones who do.", // Steve Jobs
+      "Design is not just what it looks like and feels like. Design is how it works.", // Steve Jobs
+      "Things don't have to change the world to be important.", // Steve Jobs
+      "I want to put a ding in the universe.", // Steve Jobs
+      "Quality is more important than quantity.", // Steve Jobs
+      "The only limit to our realization of tomorrow will be our doubts of today.", // Franklin D. Roosevelt
+      "Men are not prisoners of fate, but only prisoners of their own minds.", // Franklin D. Roosevelt
+      "In politics, nothing happens by accident.", // Franklin D. Roosevelt
+      "Happiness lies in the joy of achievement.", // Franklin D. Roosevelt
+      "We cannot always build the future for our youth, but we can build our youth for the future.", // Franklin D. Roosevelt
+      "Be sincere; be brief; be seated.", // Franklin D. Roosevelt
+      "The only thing we have to fear is fear itself.", // Franklin D. Roosevelt
+      "If civilization is to survive, we must cultivate the science of human relationships.", // Franklin D. Roosevelt
+      "Men are not prisoners of fate, but only prisoners of their own minds.", // Franklin D. Roosevelt
+      "Remember, remember always, that all of us are descended from immigrants and revolutionists.", // Franklin D. Roosevelt
+      "There are many ways of going forward, but only one way of standing still.", // Franklin D. Roosevelt
+      "Happiness is not in the mere possession of money; it lies in the joy of achievement.", // Franklin D. Roosevelt
+      "The only real prison is fear, and the only real freedom is freedom from fear.", // Aung San Suu Kyi
+      "It is not power that corrupts but fear.", // Aung San Suu Kyi
+      "Fear is not the natural state of civilized people.", // Aung San Suu Kyi
+      "You should never let your fears prevent you from doing what you know is right.", // Aung San Suu Kyi
+      "If you want to make peace with your enemy, you have to work with your enemy.", // Nelson Mandela
+      "It always seems impossible until it's done.", // Nelson Mandela
+      "Education is the most powerful weapon which you can use to change the world.", // Nelson Mandela
+      "I learned that courage was not the absence of fear, but the triumph over it.", // Nelson Mandela
+      "The greatest glory in living lies not in never falling, but in rising every time we fall.", // Nelson Mandela
+      "After climbing a great hill, one only finds that there are many more hills to climb." // Nelson Mandela
+    ];
+
+    function updateQuote() {
+      const quote = document.getElementById("quote");
+      quote.textContent = quotes[Math.floor(Math.random() * quotes.length)];
+    }
+
+    // Update quote every 10 seconds
+    setInterval(updateQuote, 10000);
+
     function hide() {
       sisyphus = document.getElementById("sisyphus");
       sisyphus.classList.remove("elementToFadeInAndOut");
@@ -85,24 +255,24 @@
       sisyphus.classList.add("elementToFadeInAndOut");
       setTimeout(hide, 10000);
     }
-
-    Events.Subscribe("SetScore", function (param1) {
+    
+    Events.Subscribe("SetScore", function(param1) {
       document.getElementById("score").textContent = param1;
     })
 
-    Events.Subscribe("SetMaxScore", function (param1) {
+    Events.Subscribe("SetMaxScore", function(param1) {
       document.getElementById("max_score").textContent = param1;
     })
 
-    Events.Subscribe("UpdatePlayer", function (param1) {
+    Events.Subscribe("UpdatePlayer", function(param1) {
       document.getElementById("player").textContent = param1;
     })
 
-    Events.Subscribe("UpdateMaxPlayer", function (param1) {
+    Events.Subscribe("UpdateMaxPlayer", function(param1) {
       document.getElementById("max_player").textContent = param1;
     })
 
-    Events.Subscribe("Sisyphus", function (param1) {
+    Events.Subscribe("Sisyphus", function(param1) {
       sisyphusShow();
     })
   </script>
